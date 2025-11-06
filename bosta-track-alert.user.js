@@ -12,19 +12,19 @@
 
 (function(){
   'use strict';
-  console.log('[BostaTrackAlerts] start v1.5');
+  console.log('[BostaTrackAlerts] start v1.7');
 
   // ====== CONFIG ======
   const TRACKS = {
-    '54645466': '⚠️ اقفل DAMAGE'
+    '20228179': '⚠️ اقفل DAMAGE'
     // اضف اي تراكات هنا
   };
 
   // رابط raw للملف في GitHub (تأكد من أنه هو نفس الملف)
   const RAW_URL = 'https://raw.githubusercontent.com/siefaldeenalsatar-sudo/bosta-scripts/main/bosta-track-alert.user.js';
 
-  // كم مرة يفحص (مللي ثانية)
-  const CHECK_INTERVAL_MS = 60 * 1000; // كل دقيقة
+  // كم مرة يفحص (مللي ثانية) — صار 5 ثواني للتحديث شبه الفوري
+  const CHECK_INTERVAL_MS = 5 * 1000; // كل 5 ثواني
 
   // لو true: عندما يُكتشف تحديث، سيفتح تبويب جديد للرابط الخام تلقائياً
   const AUTO_OPEN_RAW = true;
@@ -33,7 +33,7 @@
   const AUTO_RELOAD_AFTER_OPEN = true;
 
   // وقت الانتظار قبل إعادة التحميل (بالثواني) — يعطي Tampermonkey وقت لفتح UI التثبيت
-  const RELOAD_DELAY_SECONDS = 6;
+  const RELOAD_DELAY_SECONDS = 4; // قلّلها لأن عايز تحديث فوري
 
   // ====== UI (بانر إشعار) ======
   const BANNER_ID = 'bosta-update-banner-v1';
@@ -80,7 +80,7 @@
     const note = document.createElement('div');
     note.style.fontSize = '12px';
     note.style.opacity = '0.9';
-    note.textContent = ' سيُفتح تبويب التثبيت ثم تُعاد الصفحة تلقائياً.';
+    note.textContent = ' سيُفتح تبويب التثبيت ثم تُعاد الصفحة تلقائيًا.';
 
     box.appendChild(text);
     box.appendChild(openBtn);
@@ -104,6 +104,30 @@
   }
 
   function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
+
+  // بانر فوري مخصص للصفحة المطلوبة
+  function showImmediateBanner(msg) {
+    const id = 'instant-update-banner';
+    if (document.getElementById(id)) return;
+    const div = document.createElement('div');
+    div.id = id;
+    Object.assign(div.style, {
+      position: 'fixed',
+      top: '0',
+      left: '0',
+      right: '0',
+      background: '#f44336',
+      color: '#fff',
+      textAlign: 'center',
+      fontSize: '18px',
+      padding: '12px',
+      zIndex: '9999999',
+      fontFamily: 'Cairo, sans-serif',
+      fontWeight: '700'
+    });
+    div.textContent = msg + ' — سيتم التحديث تلقائيًا.';
+    document.body.appendChild(div);
+  }
 
   // ====== TRACK DETECTION ======
   function urlContainsTrackId(id){
@@ -188,15 +212,32 @@
         console.log('[BostaTrackAlerts] update detected (hash changed)');
         const verMatch = txt.match(/@version\s+([^\s]+)/i);
         const ver = verMatch ? verMatch[1] : null;
-        showUpdateBanner(ver ? ('new @version: ' + ver) : null);
-        if(AUTO_OPEN_RAW){
-          try { window.open(RAW_URL, '_blank'); console.log('[BostaTrackAlerts] opened raw URL to prompt Tampermonkey'); } catch(e){ console.warn(e); }
-        }
-        if(AUTO_RELOAD_AFTER_OPEN){
-          setTimeout(()=> {
-            console.log('[BostaTrackAlerts] reloading page to apply update...');
-            try { location.reload(); } catch(e){ window.location.href = window.location.href; }
-          }, RELOAD_DELAY_SECONDS * 1000);
+
+        // لو إحنا على صفحة returns: عرض بانر فوري ثم افتح raw واعمل reload أسرع
+        const returnsUrl = 'https://fulfillment.bosta.co/fulfillment/returns';
+        if (location.href.startsWith(returnsUrl)) {
+          showImmediateBanner('📢 تم تعديل السكربت — يرجى التحديث فورًا');
+          if(AUTO_OPEN_RAW){
+            try { window.open(RAW_URL, '_blank'); console.log('[BostaTrackAlerts] opened raw URL to prompt Tampermonkey'); } catch(e){ console.warn(e); }
+          }
+          if(AUTO_RELOAD_AFTER_OPEN){
+            setTimeout(()=> {
+              console.log('[BostaTrackAlerts] reloading page to apply update (immediate)...');
+              try { location.reload(); } catch(e){ window.location.href = window.location.href; }
+            }, Math.max(1500, RELOAD_DELAY_SECONDS * 1000)); // reload after small delay
+          }
+        } else {
+          // السلوك الافتراضي لباقي الصفحات
+          showUpdateBanner(ver ? ('new @version: ' + ver) : null);
+          if(AUTO_OPEN_RAW){
+            try { window.open(RAW_URL, '_blank'); console.log('[BostaTrackAlerts] opened raw URL to prompt Tampermonkey'); } catch(e){ console.warn(e); }
+          }
+          if(AUTO_RELOAD_AFTER_OPEN){
+            setTimeout(()=> {
+              console.log('[BostaTrackAlerts] reloading page to apply update...');
+              try { location.reload(); } catch(e){ window.location.href = window.location.href; }
+            }, RELOAD_DELAY_SECONDS * 1000);
+          }
         }
       }
       lastHash = hash;
