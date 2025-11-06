@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Bosta Track Alerts (Auto-update helper)
 // @namespace    http://tampermonkey.net/
-// @version      1.6
+// @version      1.7
 // @description  Alerts for tracks + checks GitHub raw every minute. If updated, opens raw URL (to prompt Tampermonkey) and reloads page.
 // @match        https://*.bosta.co/*
 // @run-at       document-idle
