@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Bosta Track Alerts (Auto-update helper)
 // @namespace    http://tampermonkey.net/
-// @version      1.7
+// @version      1.8
 // @description  Alerts for tracks + checks GitHub raw every minute. If updated, opens raw URL (to prompt Tampermonkey) and reloads page.
 // @match        https://*.bosta.co/*
 // @run-at       document-idle
@@ -16,7 +16,7 @@
 
   // ====== CONFIG ======
   const TRACKS = {
-    '54645466': '⚠️ اقفل DAMAGE'
+    '20228179': '⚠️ اقفل DAMAGE'
     // اضف اي تراكات هنا
   };
 
