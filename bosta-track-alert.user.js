@@ -16,7 +16,7 @@
 
   // ====== CONFIG ======
   const TRACKS = {
-    'https://fulfillment.bosta.co/fulfillment/returns/ro/1618': '⚠️ اقفل DAMAGE'
+    '36161861': '⚠️ اقفل DAMAGE'
     // اضف اي تراكات هنا
   };
 
