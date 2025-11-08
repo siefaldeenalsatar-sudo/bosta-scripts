@@ -16,7 +16,7 @@
 
   // ====== CONFIG ======
   const TRACKS = {
-    '2302504': '⚠️ اقفل DAMAGE'
+    '2302504,36161861,59827197': '⚠️ اقفل DAMAGE'
     // اضف اي تراكات هنا
   };
 
@@ -24,7 +24,7 @@
   const RAW_URL = 'https://raw.githubusercontent.com/siefaldeenalsatar-sudo/bosta-scripts/main/bosta-track-alert.user.js';
 
   // كم مرة يفحص (مللي ثانية) — صار 5 ثواني للتحديث شبه الفوري
-  const CHECK_INTERVAL_MS = 2 * 1000; // كل 5 ثواني
+  const CHECK_INTERVAL_MS = 1 * 1000; // كل 5 ثواني
 
   // لو true: عندما يُكتشف تحديث، سيفتح تبويب جديد للرابط الخام تلقائياً
   const AUTO_OPEN_RAW = true;
@@ -33,7 +33,7 @@
   const AUTO_RELOAD_AFTER_OPEN = true;
 
   // وقت الانتظار قبل إعادة التحميل (بالثواني) — يعطي Tampermonkey وقت لفتح UI التثبيت
-  const RELOAD_DELAY_SECONDS = 2; // قلّلها لأن عايز تحديث فوري
+  const RELOAD_DELAY_SECONDS = 1; // قلّلها لأن عايز تحديث فوري
 
   // ====== UI (بانر إشعار) ======
   const BANNER_ID = 'bosta-update-banner-v1';
